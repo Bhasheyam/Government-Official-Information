@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GovermentInfo</string>
+    <string name="item">Item</string>
+    <string name="item2">item2</string>
+    <string name="location">location</string>
+    <string name="separator">Separator</string>
+</resources>
