@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -19,6 +20,7 @@ public class Locate {
     private HomeLocation access;
     private LocationManager manager;
     private LocationListener listener;
+    private static final String TAG = "Locate";
 
     public Locate(HomeLocation h) {
         access = h;
@@ -74,6 +76,7 @@ public class Locate {
             Location loc = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (loc != null) {
                 access.setit(loc.getLatitude(), loc.getLongitude());
+                Log.d(TAG, "findlocation: "+loc.getLatitude()+" "+loc.getLongitude());
                 Toast.makeText(access, "Using " + LocationManager.NETWORK_PROVIDER + " Location provider", Toast.LENGTH_SHORT).show();
                 return;
             }

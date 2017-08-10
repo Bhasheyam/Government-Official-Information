@@ -1,6 +1,7 @@
 package com.example.bhash.govermentinfo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class OfficialViewHandler extends RecyclerView.Adapter<OfficalViewDisplay
     ArrayList<OfficialData> temp;
     HomeLocation access;
     OfficialData tempd;
+    private static final String TAG = "OfficialViewHandler";
     public OfficialViewHandler(HomeLocation h,ArrayList<OfficialData> d){
         access=h;
         temp=d;
@@ -26,6 +28,7 @@ public class OfficialViewHandler extends RecyclerView.Adapter<OfficalViewDisplay
         View cards= LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_name_card,parent,false);
         cards.setOnClickListener(access);
         cards.setOnLongClickListener(access);
+        Log.d(TAG, "onCreateViewHolder: Wokring to begin");
         return new OfficalViewDisplayer(cards);
     }
 
@@ -33,6 +36,7 @@ public class OfficialViewHandler extends RecyclerView.Adapter<OfficalViewDisplay
     public void onBindViewHolder(OfficalViewDisplayer holder, int position) {
         tempd=temp.get(position);
         holder.t1.setText(tempd.getPosition());
+        Log.d(TAG, "onBindViewHolder: Workingfine");
         holder.t2.setText(tempd.getName());
     }
 

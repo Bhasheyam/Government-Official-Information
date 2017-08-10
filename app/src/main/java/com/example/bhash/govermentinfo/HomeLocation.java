@@ -36,6 +36,7 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
     ArrayList Maindata;
     OfficialViewHandler Adapter;
     Locate loc;
+    private boolean check;
     private static final String TAG = "HomeLocation";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,9 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
         setContentView(R.layout.activity_home_location);
         location=(TextView)findViewById(R.id.t1);
         r1=(RecyclerView)findViewById(R.id.r);
+        Log.d(TAG, "onCreate: Came here");
         Maindata=new ArrayList<>();
+        check=false;
         Adapter=new OfficialViewHandler(this,Maindata);
         r1.setLayoutManager(new LinearLayoutManager(this));
         r1.setAdapter(Adapter);
@@ -65,6 +68,8 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
     }
 
     public void startit(String se){
+        Log.d(TAG, "startit: "+se);
+        Log.d(TAG, "startit: "+se+ "Not Working");
         DataGeneration d=new DataGeneration(this);
         d.execute(se);
     }
@@ -165,18 +170,33 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
     @Override
     public boolean onLongClick(View v) {
 
+
         Toast.makeText(this,"No Functionality for a long press",Toast.LENGTH_SHORT).show();
         return false;
     }
 
     public void updateTaks(String[] h, ArrayList<OfficialData> officialDatas) {
+        Log.d(TAG, "updateTaks:br "+Maindata.size());
+        int k=Maindata.size();
+        Maindata.clear();
+        /*for(int j=0;j<k;j++){
+            Maindata.remove(j);
+            Log.d(TAG, "updateTaks: Removed");
+        }*/
+        Log.d(TAG, "updateTaks:ar "+Maindata.size());
+        int l=0;
        for(int i=0;i<officialDatas.size();i++){
            Maindata.add(officialDatas.get(i));
+           Log.d(TAG, "updateTaks: "+l++);
        }
         location.setText(h[0]+","+h[1]+" "+h[2]);
         Adapter.notifyDataSetChanged();
-
+        if(check){
+            r1.smoothScrollBy(0,150);
+            r1.smoothScrollBy(0,-150);
+        }
     }
+
 
     public void setit(double latitude, double longitude) {
         String add=findadd(latitude,longitude);
@@ -201,11 +221,16 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
 
                 for (Address ad : addresses) {
                     Log.d(TAG, "doLocation: " + ad);
+                    sb.append(ad.getAddressLine(0));
 
-                    sb.append("\nAddress\n\n");
+
+                    /*
+                    sb.append("Address ");
+                    Log.d(TAG, "findadd: "+ad.getAddressLine(0));
                     for (int i = 0; i < ad.getMaxAddressLineIndex(); i++)
                         sb.append("\t" + ad.getAddressLine(i) + "\n");
-
+                         Log.d(TAG, "findadd: "+sb.toString());
+*/
                 }
 
                 return sb.toString();
@@ -251,5 +276,20 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
         loc.shutdown();
         super.onDestroy();
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("result", location.getText().toString());
 
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        startit(savedInstanceState.getString("result"));
+        check = true;
+
+
+
+    }
 }
