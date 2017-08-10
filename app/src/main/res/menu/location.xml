@@ -3,15 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/item"
+    <item android:title="Help"
         android:id="@+id/i1"
-        tools:ignore="AppCompatResource"
+        tools:ignore="AppCompatResource,HardcodedText"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/help" />
+        android:icon="@drawable/help"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
     <item android:title="@string/item2"
         android:id="@+id/i2"
         android:showAsAction="ifRoom"
         tools:ignore="AppCompatResource"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/location" />
+        android:icon="@drawable/location"
+        android:visible="true" />
 </menu>

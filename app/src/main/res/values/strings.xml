@@ -4,4 +4,8 @@
     <string name="item2">item2</string>
     <string name="location">location</string>
     <string name="separator">Separator</string>
+    <string name="address1">Address</string>
+    <string name="email1">Email</string>
+    <string name="phone1">Phone</string>
+    <string name="onclickf">OnImage</string>
 </resources>

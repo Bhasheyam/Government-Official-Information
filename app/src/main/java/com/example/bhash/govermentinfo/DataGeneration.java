@@ -106,9 +106,9 @@ if(s.contains("error")){
                 JSONObject ad1 = (JSONObject) ad.get(0);
 
                 if (ad1.has("line2")) {
-                    data.get(j).setAddress(ad1.getString("line1") + " " + ad1.getString("line2") + " " + ad1.getString("city") + " " + ad1.getString("state") + " " + ad1.getString("zip") + ".");
+                    data.get(j).setAddress(ad1.getString("line1") + ", " + ad1.getString("line2") + ", " + ad1.getString("city") + ", " + ad1.getString("state") + ", " + ad1.getString("zip") );
                 } else {
-                    data.get(j).setAddress(ad1.getString("line1") + " " + ad1.getString("city") + " " + ad1.getString("state") + " " + ad1.getString("zip") + ".");
+                    data.get(j).setAddress(ad1.getString("line1") + ", " + ad1.getString("city") + ", " + ad1.getString("state") + ", " + ad1.getString("zip"));
 
 
                 }

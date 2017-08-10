@@ -1,8 +1,12 @@
 package com.example.bhash.govermentinfo;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,14 +24,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class HomeLocation extends AppCompatActivity implements View.OnLongClickListener, View.OnClickListener {
     private TextView location;
     private RecyclerView r1;
     ArrayList Maindata;
     OfficialViewHandler Adapter;
+    Locate loc;
     private static final String TAG = "HomeLocation";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +47,14 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
         Adapter=new OfficialViewHandler(this,Maindata);
         r1.setLayoutManager(new LinearLayoutManager(this));
         r1.setAdapter(Adapter);
+        if(isConnected()) {
+//location Service
+            loc=new Locate(this);
+        }
 
-
+        else{
+            noconnection();
+        }
     }
 
     @Override
@@ -49,18 +63,7 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
         i.inflate(R.menu.location,menu);
         return super.onCreateOptionsMenu(menu);
     }
-    @Override
-    protected void onResume() {
-        if(isConnected()) {
-//location Service
-            startit("60504");
-            }
 
-        else{
-            noconnection();
-        }
-        super.onResume();
-    }
     public void startit(String se){
         DataGeneration d=new DataGeneration(this);
         d.execute(se);
@@ -114,7 +117,11 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                     startit(et.getText().toString());
+                        if(isConnected()){
+                     startit(et.getText().toString());}else{
+                            location.setText("No location can be found");
+                            noconnection();
+                        }
                     }
                 });
                 d.setNegativeButton("Cancel",new DialogInterface.OnClickListener(){
@@ -124,8 +131,8 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
 
                     }
                 });
-                d.setTitle("Enter Zipcode");
-                d.setMessage("Enter the ZipCode of the location");
+                d.setTitle("Enter location");
+                d.setMessage("Enter the location details");
                 Dialog zipit=d.create();
                 zipit.show();
                 break;
@@ -170,4 +177,79 @@ public class HomeLocation extends AppCompatActivity implements View.OnLongClickL
         Adapter.notifyDataSetChanged();
 
     }
+
+    public void setit(double latitude, double longitude) {
+        String add=findadd(latitude,longitude);
+        startit(add);
+
+    }
+
+    private String findadd(double latitude, double longitude) {
+        Log.d(TAG, "doAddress: Lat: " + latitude + ", Lon: " + longitude);
+
+
+
+        List<Address> addresses = null;
+        for (int times = 0; times < 3; times++) {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                Log.d(TAG, "doAddress: Getting address now");
+
+
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                StringBuilder sb = new StringBuilder();
+
+                for (Address ad : addresses) {
+                    Log.d(TAG, "doLocation: " + ad);
+
+                    sb.append("\nAddress\n\n");
+                    for (int i = 0; i < ad.getMaxAddressLineIndex(); i++)
+                        sb.append("\t" + ad.getAddressLine(i) + "\n");
+
+                }
+
+                return sb.toString();
+            } catch (IOException e) {
+                Log.d(TAG, "doAddress: " + e.getMessage());
+
+            }
+
+        }
+        return null;
+
+    }
+
+    public void noLocationAvailable() {
+        location.setText("No location can be found");
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        Log.d(TAG, "onRequestPermissionsResult: CALL: " + permissions.length);
+        Log.d(TAG, "onRequestPermissionsResult: PERM RESULT RECEIVED");
+
+        if (requestCode == 5) {
+            Log.d(TAG, "onRequestPermissionsResult: permissions.length: " + permissions.length);
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "onRequestPermissionsResult: HAS PERM");
+                        loc.setuploactionmanager();
+                        loc.findlocation();
+                    } else {
+                        Toast.makeText(this, "Location permission was denied - cannot determine address", Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "onRequestPermissionsResult: NO PERM");
+                    }
+                }
+            }
+        }
+        Log.d(TAG, "onRequestPermissionsResult: Exiting onRequestPermissionsResult");
+    }
+
+    protected void onDestroy() {
+        loc.shutdown();
+        super.onDestroy();
+    }
+
 }
