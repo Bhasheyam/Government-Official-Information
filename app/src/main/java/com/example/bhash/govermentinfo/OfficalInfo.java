@@ -63,18 +63,32 @@ public class OfficalInfo extends AppCompatActivity {
         i3=(ImageButton)findViewById(R.id.i3b3);
         i4=(ImageButton)findViewById(R.id.i4b4);
         i5=(ImageButton)findViewById(R.id.i5b5);
+
         l1=(ConstraintLayout) findViewById(R.id.activity_offical_info);
-        if(Data.getParty().equals("Democratic")){
+        if(Data.getParty()==null ) {
+            l1.setBackgroundColor(Color.BLACK);
+        }
+
+        else if(Data.getParty().equals("Democratic")){
             l1.setBackgroundColor(Color.BLUE);
 
         }
         else if(Data.getParty().equals("Republican")){
             l1.setBackgroundColor(Color.RED);
         }
+        else{
+            l1.setBackgroundColor(Color.BLACK);
+        }
         t1.setText(loc);
         t2.setText(Data.getPosition());
         t3.setText(Data.getName());
-        t4.setText("("+Data.getParty()+")");
+        if(Data.getParty()!=null){
+            t4.setText("("+Data.getParty()+")");
+        }
+        else{
+            t4.setText("("+"Unknown"+")");
+        }
+
         if(Data.getAddress()!=null){
             Pattern pattern = Pattern.compile(".*", Pattern.DOTALL);
             t5.setText(Data.getAddress());
